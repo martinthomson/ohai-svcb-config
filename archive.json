@@ -1,0 +1,546 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2022-03-17T00:07:02.213541+00:00",
+  "repo": "tfpauly/draft-ohai-svcb-config",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 2,
+      "id": "I_kwDOG3oZ-85EYSFG",
+      "title": "OHTTP targets need a path",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/2",
+      "state": "CLOSED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I may have missed it, but the current draft doesn't seem to provide a way for clients to discover the full oblivious target resource from a HTTPS record with the \"oblivious-configs\" parameter -- it only gives them the configuration structure. Similar to the DNS case, OHTTP targets are defined by their path, so I think it might make sense to mint a new parameter for the path, maybe \"oblivious-path\"? ",
+      "createdAt": "2022-02-22T18:04:11Z",
+      "updatedAt": "2022-02-28T22:00:48Z",
+      "closedAt": "2022-02-28T22:00:48Z",
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "Yeah, for the DNS case, they have dohpath, but I think we'd need a path here too for oblivious HTTP generically!",
+          "createdAt": "2022-02-22T18:05:06Z",
+          "updatedAt": "2022-02-22T18:05:06Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@tfpauly would you like a PR?",
+          "createdAt": "2022-02-23T00:54:59Z",
+          "updatedAt": "2022-02-23T00:54:59Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "Nah, I can add it soon.",
+          "createdAt": "2022-02-23T00:55:34Z",
+          "updatedAt": "2022-02-23T00:55:34Z"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOG3oZ-85EYTef",
+      "title": "Mixed configuration structures for DNS",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/3",
+      "state": "CLOSED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft currently allows for the \"configs\" parameter to carry an `ObliviousDoHConfigs` structure instead of a `KeyConfig`. `ObliviousDoHConfigs` looks like so:\r\n\r\n~~~\r\nstruct {\r\n   uint16 kem_id;\r\n   uint16 kdf_id;\r\n   uint16 aead_id;\r\n   opaque public_key<1..2^16-1>;\r\n} ObliviousDoHConfigContents;\r\n\r\nstruct {\r\n   uint16 version;\r\n   uint16 length;\r\n   select (ObliviousDoHConfig.version) {\r\n      case 0x0001: ObliviousDoHConfigContents contents;\r\n   }\r\n} ObliviousDoHConfig;\r\n\r\nObliviousDoHConfig ObliviousDoHConfigs<1..2^16-1>;\r\n~~~\r\n\r\nAnd `KeyConfig`:\r\n\r\n~~~\r\nstruct {\r\n  uint8 key_id;\r\n  HpkeKemId kem_id;\r\n  HpkePublicKey public_key;\r\n  HpkeSymmetricAlgorithms cipher_suites<4..2^16-4>;\r\n} KeyConfig;\r\n~~~\r\n\r\nI've not actually worked it out, but I wonder if these structures are defined such that clients can always distinguish between the two. If clients get confused, they might try to engage the OHTTP encapsulation logic instead of ODoH logic (or vice versa), and I don't think we have a good understanding of what can happen as a result.\r\n\r\nAbsent this analysis, I would drop the ability for configs to carry either one of these structures, and unify around `KeyConfig`. ",
+      "createdAt": "2022-02-22T18:10:36Z",
+      "updatedAt": "2022-02-28T22:00:48Z",
+      "closedAt": "2022-02-28T22:00:48Z",
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "I don't think it's possible for a config to parse validly for both \u2014 we can add the analysis.",
+          "createdAt": "2022-02-22T20:12:04Z",
+          "updatedAt": "2022-02-22T20:12:04Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Having this ambiguous definition doesn't seem particularly helpful. Why not just pick the simpler thing here?",
+          "createdAt": "2022-02-22T20:13:40Z",
+          "updatedAt": "2022-02-22T20:13:40Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "The simpler thing being defining two separate keys?",
+          "createdAt": "2022-02-22T20:15:16Z",
+          "updatedAt": "2022-02-22T20:15:16Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There's probably at least three options:\r\n\r\n1. Use separate keys for each config type\r\n1. Use `KeyConfig` for OHTTP and `ObliviousDoHConfigs` for ODoH\r\n1. Use `KeyConfig` for OHTTP and ODoH\r\n\r\nI would go with option (3), but (1) and (2) seem reasonable?",
+          "createdAt": "2022-02-22T20:18:23Z",
+          "updatedAt": "2022-02-22T20:18:23Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "I think the choice is more like:\r\n1. Use one SVCB parameter for `KeyConfig`, which covers OHTTP generic and ODoH \"v2\", and another SVCB parameter for `ObliviousDoHConfigs` for ODoH \"v1\"\r\n2. Use the same SVCB parameter for both versions of ODoH, so that DNS resolver software doesn't have to care about the two",
+          "createdAt": "2022-02-22T20:25:19Z",
+          "updatedAt": "2022-02-22T20:25:19Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "That's a better framing, and between the two, I would go with (1). \ud83e\udd37 ",
+          "createdAt": "2022-02-22T21:05:50Z",
+          "updatedAt": "2022-02-22T21:05:50Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@tfpauly would you like a PR?",
+          "createdAt": "2022-02-23T00:54:50Z",
+          "updatedAt": "2022-02-23T00:54:50Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "No, I'll do a restructure.",
+          "createdAt": "2022-02-23T00:57:50Z",
+          "updatedAt": "2022-02-23T00:57:50Z"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOG3oZ-85EYT9Z",
+      "title": "Key consistency",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/4",
+      "state": "CLOSED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The security considerations section lists several ways in which clients could try to ensure they have a consistent view of the oblivious target's public key. Shamelessly, I would instead cite [this document](https://chris-wood.github.io/key-consistency/draft-wood-key-consistency.html), as that's what OHTTP is doing now. (We're going to SECDISPATCH this to see what becomes of it.)",
+      "createdAt": "2022-02-22T18:12:49Z",
+      "updatedAt": "2022-02-22T21:02:56Z",
+      "closedAt": "2022-02-22T21:02:56Z",
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "Yes, that's a good citation to make",
+          "createdAt": "2022-02-22T20:12:22Z",
+          "updatedAt": "2022-02-22T20:12:22Z"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "I_kwDOG3oZ-85EYXWj",
+      "title": "ODoH target verification",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/5",
+      "state": "CLOSED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft seems to prohibit DDR verification for ODoH targets:\r\n\r\n> In the case of oblivious DNS servers, the client cannot direclty use the verification mechanisms described in {{DDR}}, which rely on checking for known resovler IP addresses or hostnames in TLS certificates, since clients do not directly perfom TLS with oblivious targets.\r\n\r\nIt's true that the normal flow of ODoH doesn't require the client to check with the oblivious target, but the client _could_ do this before sending queries to the target. Whether that is a privacy problem depends on the threat model, I think. For example, if there's only one client that discovers and validates this oblivious target, then applying the DDR check would basically break the ODoH guarantee that the target can't link queries to clients. But that's not necessarily true if there are many clients. \r\n\r\nI'd relax this text and allow either verification mechanism, noting the possible problem that might arise if there's not a sufficient number of clients using the target. ",
+      "createdAt": "2022-02-22T18:29:18Z",
+      "updatedAt": "2022-02-22T21:14:33Z",
+      "closedAt": "2022-02-22T21:14:33Z",
+      "comments": []
+    },
+    {
+      "number": 11,
+      "id": "I_kwDOG3oZ-85FRk-H",
+      "title": "DNSSEC doesn't provide consistency",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/11",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "> One mitigation specific to this mechanism is validating that SVCB or HTTPS records including the \"oblivious-configs\" are protected by [DNSSEC](https://www.ietf.org/archive/id/draft-pauly-ohai-svcb-config-00.html#DNSSEC) [DNSSEC]. This prevents attacks where a unique response is generated for each client of a resolver.\r\n\r\n-- https://www.ietf.org/archive/id/draft-pauly-ohai-svcb-config-00.html#section-5-3\r\n\r\nThis isn't true as DNSSEC responses can be customized on a per-client basis (worse if EDNS(0) client subnet is in use).  What might be a more realistic protection here is caching at a resolver, which might prevent that sort of customization.  Of course, if this is for DNS resolution - as it is - that doesn't necessarily help that much.",
+      "createdAt": "2022-03-08T05:25:46Z",
+      "updatedAt": "2022-03-08T05:31:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "Fair enough \u2014 we can remove this comment.",
+          "createdAt": "2022-03-08T05:31:44Z",
+          "updatedAt": "2022-03-08T05:31:44Z"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "I_kwDOG3oZ-85FRlTs",
+      "title": "What does ohttp-path identify?",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/12",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Is it the oblivious request resource or the oblivious proxy resource.  Clients need the latter, but it doesn't seem like you have allowed for an absolute URI as this is a \"path\" and not a URI and [this](https://www.ietf.org/archive/id/draft-pauly-ohai-svcb-config-00.html#section-3-4) says:\r\n\r\n> If this path parameter is not present, oblivious requests can be made to the root \"/\" path.\r\n\r\n... on which server?",
+      "createdAt": "2022-03-08T05:28:22Z",
+      "updatedAt": "2022-03-08T05:35:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "This is meant to be the path on the target server, not the proxy. The client would need to work with the proxy to know how the target maps to a request.\r\n\r\nThe entity publishing the target config only knows about the target name and path, not the proxy info. Knowing how a proxy does mappings is out of scope here, I think.",
+          "createdAt": "2022-03-08T05:33:38Z",
+          "updatedAt": "2022-03-08T05:33:38Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "FYI @chris-wood , since you had asked for the path parameter to be added.",
+          "createdAt": "2022-03-08T05:35:16Z",
+          "updatedAt": "2022-03-08T05:35:16Z"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "I_kwDOG3oZ-85FRlao",
+      "title": "A client has to trust the oblivious proxy resource",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/issues/13",
+      "state": "OPEN",
+      "author": "martinthomson",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "If it gets this via a discovery process, how does it know that it can trust that resource?",
+      "createdAt": "2022-03-08T05:29:05Z",
+      "updatedAt": "2022-03-15T20:51:05Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "In this model, the client isn't discovering the proxy \u2014 it's discovering the target, and has a proxy that it trusts already. Proxy discovery would be a separate mechanism.",
+          "createdAt": "2022-03-08T05:34:39Z",
+          "updatedAt": "2022-03-08T05:34:39Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "NONE",
+          "body": "I see.  That wasn't at all clear.  OHTTP doesn't really let you choose a target at the proxy though, so how would you propose that the client discover the oblivious proxy resource?",
+          "createdAt": "2022-03-09T04:08:08Z",
+          "updatedAt": "2022-03-09T04:08:08Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "body": "The client would be using a proxy it already knows about or knows can handle this target.",
+          "createdAt": "2022-03-15T20:51:05Z",
+          "updatedAt": "2022-03-15T20:51:05Z"
+        }
+      ]
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOG3oZ-84zTR3S",
+      "title": "\"oblivious-keys\" to \"oblivious-configs\"",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/1",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-02-22T18:02:37Z",
+      "updatedAt": "2022-02-22T18:08:13Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "5542c9c21e65243cc090cb6d2b01fecc2fe70e94",
+      "headRepository": "chris-wood/draft-ohai-svcb-config",
+      "headRefName": "caw/keys-to-configs",
+      "headRefOid": "6449af638b4b4ee7253772415482e5efe374877d",
+      "closedAt": "2022-02-22T18:08:13Z",
+      "mergedAt": "2022-02-22T18:08:13Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "5e6c43165d4d1d4453eb1ed9540799191078095b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG3oZ-841DwrW",
+          "commit": {
+            "abbreviatedOid": "690fe72"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-22T18:07:07Z",
+          "updatedAt": "2022-02-22T18:07:07Z",
+          "comments": [
+            {
+              "originalPosition": 117,
+              "body": "```suggestion\r\n| TBD     | oblivious-configs | Oblivious HTTP key configurations         | (This document) |\r\n```",
+              "createdAt": "2022-02-22T18:07:07Z",
+              "updatedAt": "2022-02-22T18:07:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-841Dwvi",
+          "commit": {
+            "abbreviatedOid": "690fe72"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-02-22T18:07:21Z",
+          "updatedAt": "2022-02-22T18:07:21Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOG3oZ-84zTXDN",
+      "title": "Fix some typos",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/6",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-02-22T18:31:03Z",
+      "updatedAt": "2022-02-22T20:11:08Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "5e6c43165d4d1d4453eb1ed9540799191078095b",
+      "headRepository": "chris-wood/draft-ohai-svcb-config",
+      "headRefName": "patch-1",
+      "headRefOid": "e2c4898c97d0650ddf4db8143a0e5367c8330306",
+      "closedAt": "2022-02-22T20:11:08Z",
+      "mergedAt": "2022-02-22T20:11:08Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "e802f704574c8e9fbe67552194ec1d8105c6ae73"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG3oZ-841EQgB",
+          "commit": {
+            "abbreviatedOid": "e2c4898"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-02-22T20:11:04Z",
+          "updatedAt": "2022-02-22T20:11:04Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOG3oZ-84zTr2F",
+      "title": "Reference key consistency",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/7",
+      "state": "MERGED",
+      "author": "tfpauly",
+      "authorAssociation": "OWNER",
+      "assignees": [
+        "tfpauly"
+      ],
+      "labels": [],
+      "body": "Closes #4",
+      "createdAt": "2022-02-22T20:30:30Z",
+      "updatedAt": "2022-02-22T21:02:56Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "e802f704574c8e9fbe67552194ec1d8105c6ae73",
+      "headRepository": "tfpauly/draft-ohai-svcb-config",
+      "headRefName": "tfpauly-patch-1",
+      "headRefOid": "0308f5f93a92e6ba0e659268f005c8cc159084c1",
+      "closedAt": "2022-02-22T21:02:56Z",
+      "mergedAt": "2022-02-22T21:02:56Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "68cddaccd9b6a6a26c9fcad995d90f638305bb0b"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOG3oZ-84zTxlT",
+      "title": "Explain direct verification of ODoH target",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/8",
+      "state": "MERGED",
+      "author": "tfpauly",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #5",
+      "createdAt": "2022-02-22T21:05:30Z",
+      "updatedAt": "2022-02-22T21:14:33Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "68cddaccd9b6a6a26c9fcad995d90f638305bb0b",
+      "headRepository": "tfpauly/draft-ohai-svcb-config",
+      "headRefName": "tfpauly-patch-2",
+      "headRefOid": "75719c8390b2e5eeddad0148b1187884a0fef56b",
+      "closedAt": "2022-02-22T21:14:33Z",
+      "mergedAt": "2022-02-22T21:14:33Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "96282c4027d06af7ec27e1db1033eec512ad28b2"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG3oZ-841EdoR",
+          "commit": {
+            "abbreviatedOid": "75719c8"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-02-22T21:06:28Z",
+          "updatedAt": "2022-02-22T21:06:28Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOG3oZ-84zsJJx",
+      "title": "Add explicit keys for OHTTP-Path and ODoH-Configs",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/9",
+      "state": "MERGED",
+      "author": "tfpauly",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #2 \r\nCloses #3 ",
+      "createdAt": "2022-02-28T21:36:32Z",
+      "updatedAt": "2022-02-28T22:00:48Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "96282c4027d06af7ec27e1db1033eec512ad28b2",
+      "headRepository": "tfpauly/draft-ohai-svcb-config",
+      "headRefName": "tfpauly-patch-3",
+      "headRefOid": "1f24def588254ccd4daf46afd66a8b87f536c412",
+      "closedAt": "2022-02-28T22:00:48Z",
+      "mergedAt": "2022-02-28T22:00:48Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "34a491133562f358093f5355ecf575b2f389a7a4"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG3oZ-841YhT6",
+          "commit": {
+            "abbreviatedOid": "1f24def"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-02-28T21:37:57Z",
+          "updatedAt": "2022-02-28T21:37:57Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "PR_kwDOG3oZ-84z_L6A",
+      "title": "Co-author draft",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/10",
+      "state": "MERGED",
+      "author": "tireddy2",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-05T07:43:03Z",
+      "updatedAt": "2022-03-05T15:02:03Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "2373fe260b8efa09ef46c3942581fc4312012b09",
+      "headRepository": "tireddy2/draft-ohai-svcb-config",
+      "headRefName": "main",
+      "headRefOid": "47ba8bfff47319d12d7335e3f469ff2dfe4b74d5",
+      "closedAt": "2022-03-05T15:02:03Z",
+      "mergedAt": "2022-03-05T15:02:03Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "ae8469bf109b42f9c79367f5be1b9e1c0d39658e"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
