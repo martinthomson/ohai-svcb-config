@@ -13,11 +13,11 @@ DNS resource records to denote that a service is accessible as an Oblivious
 HTTP target, as well as a mechanism to look up oblivious key configurations
 using a well-known URI. 
     " name="description">
-<meta content="xml2rfc 3.12.4" name="generator">
+<meta content="xml2rfc 3.12.6" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-pauly-ohai-svcb-config-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.12.4
+  xml2rfc 3.12.6
     Python 3.9.7
     appdirs 1.4.4
     ConfigArgParse 1.3
@@ -1017,11 +1017,11 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Oblivious Services in SVCB</td>
-<td class="right">April 2022</td>
+<td class="right">May 2022</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Pauly &amp; Reddy</td>
-<td class="center">Expires 25 October 2022</td>
+<td class="center">Expires 16 November 2022</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1034,12 +1034,12 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 <dd class="internet-draft">draft-pauly-ohai-svcb-config-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2022-04-23" class="published">23 April 2022</time>
+<time datetime="2022-05-15" class="published">15 May 2022</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2022-10-25">25 October 2022</time></dd>
+<dd class="expires"><time datetime="2022-11-16">16 November 2022</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1092,7 +1092,7 @@ using a well-known URI.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 25 October 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 16 November 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1234,36 +1234,20 @@ described in an SVCB record can act as an oblivious target. Clients
 can issue requests to this service through an oblivious proxy once
 they learn the key configuration to use to encrypt messages to the
 oblivious target.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">The value of the "oblivious" parameter is a number that encodes
-the different states for how the described service supports oblivious
-requests and non-oblivious requests. The values are:<a href="#section-3-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-3.1">0: the service does not support receiving requests as an oblivious
-target.<a href="#section-3-3.1" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-3.2">1: the service only supports receiving requests as an oblivious
-target.<a href="#section-3-3.2" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-3.3">2: the service supports receiving requests as an oblivious target, as
-well as direct requests.<a href="#section-3-3.3" class="pilcrow">¶</a>
-</li>
-      </ul>
-<p id="section-3-4">If the value of "oblivious" is 1, which indicates that this service
-is not a generic service, but only support oblivious access, the
-"oblivious" parameter <span class="bcp14">MUST</span> be in the mandatory parameter list,
-to ensure that implementations that do not understand the key
-do not interpret this service as a generic service.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">The presentation value of the SvcParamValue is a single decimal integer
-between 0 and 2 in ASCII. Any other value (e.g. an empty value) is a
-syntax error. To enable simpler parsing, this SvcParam <span class="bcp14">MUST NOT</span> contain
-escape sequences.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">The wire format of the SvcParamValue is the corresponding 1 octet numeric
-value.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">The scheme to use for oblivious requests made to a service depends on
+<p id="section-3-2">Both the presentation and wire format values for the "oblivious"
+parameter <span class="bcp14">MUST</span> be empty.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">The "oblivious" parameter can be included in the mandatory parameter
+list to ensure that clients that do not support oblivious access
+do not try to use the service. Services that include mark oblivious
+support as mandatory can, therefore, indicate that the service might
+not be accessible in a non-oblivious fashion. Services that are
+intended to be accessed either as an oblivious target or directly
+<span class="bcp14">SHOULD NOT</span> mark the "oblivious" parameter as mandatory.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">The scheme to use for oblivious requests made to a service depends on
 the scheme of the SVCB record. This document defines the interpretation for
 the "https" <span>[<a href="#SVCB" class="xref">SVCB</a>]</span> and "dns" <span>[<a href="#DNS-SVCB" class="xref">DNS-SVCB</a>]</span>
 schemes. Other schemes that want to use this parameter <span class="bcp14">MUST</span> define the
-interpretation and meaning of the configuration.<a href="#section-3-7" class="pilcrow">¶</a></p>
+interpretation and meaning of the configuration.<a href="#section-3-4" class="pilcrow">¶</a></p>
 <div id="use-in-https-service-records">
 <section id="section-3.1">
         <h3 id="name-use-in-https-service-record">
@@ -1429,7 +1413,7 @@ registry (<span>[<a href="#SVCB" class="xref">SVCB</a>]</span>).<a href="#sectio
 <dl class="references">
 <dt id="BINARY-HTTP">[BINARY-HTTP]</dt>
         <dd>
-<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Binary Representation of HTTP Messages"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-binary-message-01</span>, <time datetime="2022-02-03" class="refDate">3 February 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-binary-message-01">https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-binary-message-01</a>&gt;</span>. </dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Binary Representation of HTTP Messages"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpbis-binary-message-03</span>, <time datetime="2022-05-09" class="refDate">9 May 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-binary-message-03">https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-binary-message-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="DDR">[DDR]</dt>
         <dd>
@@ -1465,7 +1449,7 @@ registry (<span>[<a href="#SVCB" class="xref">SVCB</a>]</span>).<a href="#sectio
 <dd class="break"></dd>
 <dt id="SVCB">[SVCB]</dt>
       <dd>
-<span class="refAuthor">Schwartz, B.</span>, <span class="refAuthor">Bishop, M.</span>, and <span class="refAuthor">E. Nygren</span>, <span class="refTitle">"Service binding and parameter specification via the DNS (DNS SVCB and HTTPS RRs)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dnsop-svcb-https-08</span>, <time datetime="2021-10-12" class="refDate">12 October 2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-svcb-https-08">https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-svcb-https-08</a>&gt;</span>. </dd>
+<span class="refAuthor">Schwartz, B.</span>, <span class="refAuthor">Bishop, M.</span>, and <span class="refAuthor">E. Nygren</span>, <span class="refTitle">"Service binding and parameter specification via the DNS (DNS SVCB and HTTPS RRs)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-dnsop-svcb-https-09</span>, <time datetime="2022-05-06" class="refDate">6 May 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-svcb-https-09">https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-svcb-https-09</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>

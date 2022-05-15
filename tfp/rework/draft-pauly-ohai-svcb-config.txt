@@ -5,8 +5,8 @@
 Oblivious HTTP Application Intermediation                       T. Pauly
 Internet-Draft                                                Apple Inc.
 Intended status: Informational                                  T. Reddy
-Expires: 25 October 2022                                          Akamai
-                                                           23 April 2022
+Expires: 16 November 2022                                         Akamai
+                                                             15 May 2022
 
 
       Discovery of Oblivious Services via Service Binding Records
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 October 2022.
+   This Internet-Draft will expire on 16 November 2022.
 
 Copyright Notice
 
@@ -130,32 +130,16 @@ Table of Contents
    once they learn the key configuration to use to encrypt messages to
    the oblivious target.
 
-   The value of the "oblivious" parameter is a number that encodes the
-   different states for how the described service supports oblivious
-   requests and non-oblivious requests.  The values are:
+   Both the presentation and wire format values for the "oblivious"
+   parameter MUST be empty.
 
-   *  0: the service does not support receiving requests as an oblivious
-      target.
-
-   *  1: the service only supports receiving requests as an oblivious
-      target.
-
-   *  2: the service supports receiving requests as an oblivious target,
-      as well as direct requests.
-
-   If the value of "oblivious" is 1, which indicates that this service
-   is not a generic service, but only support oblivious access, the
-   "oblivious" parameter MUST be in the mandatory parameter list, to
-   ensure that implementations that do not understand the key do not
-   interpret this service as a generic service.
-
-   The presentation value of the SvcParamValue is a single decimal
-   integer between 0 and 2 in ASCII.  Any other value (e.g. an empty
-   value) is a syntax error.  To enable simpler parsing, this SvcParam
-   MUST NOT contain escape sequences.
-
-   The wire format of the SvcParamValue is the corresponding 1 octet
-   numeric value.
+   The "oblivious" parameter can be included in the mandatory parameter
+   list to ensure that clients that do not support oblivious access do
+   not try to use the service.  Services that include mark oblivious
+   support as mandatory can, therefore, indicate that the service might
+   not be accessible in a non-oblivious fashion.  Services that are
+   intended to be accessed either as an oblivious target or directly
+   SHOULD NOT mark the "oblivious" parameter as mandatory.
 
    The scheme to use for oblivious requests made to a service depends on
    the scheme of the SVCB record.  This document defines the
@@ -291,9 +275,9 @@ Table of Contents
    [BINARY-HTTP]
               Thomson, M. and C. A. Wood, "Binary Representation of HTTP
               Messages", Work in Progress, Internet-Draft, draft-ietf-
-              httpbis-binary-message-01, 3 February 2022,
+              httpbis-binary-message-03, 9 May 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-
-              binary-message-01>.
+              binary-message-03>.
 
    [DDR]      Pauly, T., Kinnear, E., Wood, C. A., McManus, P., and T.
               Jensen, "Discovery of Designated Resolvers", Work in
@@ -338,9 +322,9 @@ Table of Contents
    [SVCB]     Schwartz, B., Bishop, M., and E. Nygren, "Service binding
               and parameter specification via the DNS (DNS SVCB and
               HTTPS RRs)", Work in Progress, Internet-Draft, draft-ietf-
-              dnsop-svcb-https-08, 12 October 2021,
+              dnsop-svcb-https-09, 6 May 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-
-              svcb-https-08>.
+              svcb-https-09>.
 
 7.2.  Informative References
 
