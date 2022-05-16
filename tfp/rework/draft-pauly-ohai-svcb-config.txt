@@ -226,7 +226,20 @@ Table of Contents
    This document defines a well-known URI [RFC8615], "oblivious-
    configs", that allows a target to host its configurations.
 
-   TODO: Provide example URI based on SVCB record
+   The URI is constructed using the TargetName in the SVCB record.
+
+   For example, the URI for the following record:
+
+   svc.example.com. 7200  IN HTTPS 1 . alpn=h2,h2 oblivious
+
+   would be "https://svc.example.com/.well-known/oblivious-configs"
+
+   As another example, the URI for the following record:
+
+   _dns.resolver.arpa  7200  IN SVCB 1 doh.example.net (
+        alpn=h2 dohpath=/dns-query{?dns} oblivious )
+
+   would be "https://doh.example.net/.well-known/oblivious-configs"
 
    TODO: Explain who fetches the config
 
