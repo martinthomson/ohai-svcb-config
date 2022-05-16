@@ -232,16 +232,23 @@ Table of Contents
 
    svc.example.com. 7200  IN HTTPS 1 . alpn=h2,h2 oblivious
 
-   would be "https://svc.example.com/.well-known/oblivious-configs"
+   would be "https://svc.example.com/.well-known/oblivious-configs".
 
    As another example, the URI for the following record:
 
    _dns.resolver.arpa  7200  IN SVCB 1 doh.example.net (
         alpn=h2 dohpath=/dns-query{?dns} oblivious )
 
-   would be "https://doh.example.net/.well-known/oblivious-configs"
+   would be "https://doh.example.net/.well-known/oblivious-configs".
 
-   TODO: Explain who fetches the config
+   The content of this resource is expected to be "application/ohttp-
+   keys", as defined in [OHTTP].
+
+   Before being able to use a server as an oblivious target, clients
+   need to use this URI to fetch the configuration.  They can either
+   fetch it directly, or do so via a proxy in order to avoid the server
+   discovering information about the client's identity.  See Section 5
+   for more discussion of avoiding key targeting attacks.
 
 5.  Security and Privacy Considerations
 
