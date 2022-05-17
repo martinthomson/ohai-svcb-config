@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-03-17T00:07:02.213541+00:00",
+  "timestamp": "2022-05-17T00:08:57.704543+00:00",
   "repo": "tfpauly/draft-ohai-svcb-config",
   "labels": [
     {
@@ -539,6 +539,34 @@
       "mergeCommit": {
         "oid": "ae8469bf109b42f9c79367f5be1b9e1c0d39658e"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 14,
+      "id": "PR_kwDOG3oZ-8435ji6",
+      "title": "Rework of protocol based on IETF 113 feedback",
+      "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/14",
+      "state": "OPEN",
+      "author": "tfpauly",
+      "authorAssociation": "OWNER",
+      "assignees": [
+        "tfpauly"
+      ],
+      "labels": [],
+      "body": "The main change here is to change the SVCB parameter to a boolean, and have a well-known URI to fetch the config from the target server.",
+      "createdAt": "2022-05-16T18:25:31Z",
+      "updatedAt": "2022-05-16T18:25:32Z",
+      "baseRepository": "tfpauly/draft-ohai-svcb-config",
+      "baseRefName": "main",
+      "baseRefOid": "c0e215f4c0c3feb119c6be6365af7e2332c5327c",
+      "headRepository": "tfpauly/draft-ohai-svcb-config",
+      "headRefName": "tfp/rework",
+      "headRefOid": "22522ae98e7a3d0d4037dea9cb0d37a2068eae35",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
