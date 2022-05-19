@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-05-17T00:08:57.704543+00:00",
+  "timestamp": "2022-05-19T00:08:12.312170+00:00",
   "repo": "tfpauly/draft-ohai-svcb-config",
   "labels": [
     {
@@ -556,7 +556,7 @@
       "labels": [],
       "body": "The main change here is to change the SVCB parameter to a boolean, and have a well-known URI to fetch the config from the target server.",
       "createdAt": "2022-05-16T18:25:31Z",
-      "updatedAt": "2022-05-16T18:25:32Z",
+      "updatedAt": "2022-05-18T07:42:12Z",
       "baseRepository": "tfpauly/draft-ohai-svcb-config",
       "baseRefName": "main",
       "baseRefOid": "c0e215f4c0c3feb119c6be6365af7e2332c5327c",
@@ -568,7 +568,182 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOG3oZ-846H-aZ",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-17T09:45:15Z",
+          "updatedAt": "2022-05-17T09:45:16Z",
+          "comments": [
+            {
+              "originalPosition": 214,
+              "body": "The proposed mechanism is susceptible to downgrade attack (not to use oblivious HTTP). I mean an attacker removing the oblivious SvcParamKey from the DNS response. Couple of possible ways to mitigate the attack could be (1) to perform the DNS SVCB query again after secure transport connection is established with the discovered DNS resolver (2) Rely on DNSSEC.",
+              "createdAt": "2022-05-17T09:45:15Z",
+              "updatedAt": "2022-05-17T11:45:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846IGPs",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-05-17T10:08:00Z",
+          "updatedAt": "2022-05-17T10:12:16Z",
+          "comments": [
+            {
+              "originalPosition": 171,
+              "body": "Rather than use the TargetName directly, should clients chase TargetNames down to a terminal node in the SVCB chain? For example, if _dns.resolver.arpa targets doh.example, and doh.example targets jk-this-doh.example, presumably the target the client should use is jk-this-doh.example, right?",
+              "createdAt": "2022-05-17T10:08:00Z",
+              "updatedAt": "2022-05-17T10:12:16Z"
+            },
+            {
+              "originalPosition": 160,
+              "body": "```suggestion\r\nClients that know a service is available as an oblivious target, e.g., \r\neither via discovery through the \"oblivious\" parameter in a SVCB or HTTPS\r\nrecord, or by configuration, need to know the key configuration before sending\r\noblivious requests.\r\n```\r\n\r\nSince the URI is separate from the discovery mechanism and could be used even for manually configured client/target arrangements.",
+              "createdAt": "2022-05-17T10:10:33Z",
+              "updatedAt": "2022-05-17T10:12:16Z"
+            },
+            {
+              "originalPosition": 224,
+              "body": "I might add some text here about how the SVCB parameter is just a hint, and clients _could_ choose to query every target for their oblivious configs if they wanted to. In that way, DNSSEC isn't required -- it's just an optimization.",
+              "createdAt": "2022-05-17T10:12:13Z",
+              "updatedAt": "2022-05-17T10:12:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846H-0T",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-17T09:46:26Z",
+          "updatedAt": "2022-05-17T11:45:52Z",
+          "comments": [
+            {
+              "originalPosition": 214,
+              "body": "We may want to refer to the Security Considerations discussed in https://datatracker.ietf.org/doc/html/draft-ietf-add-svcb-dns-03#section-8.",
+              "createdAt": "2022-05-17T09:46:26Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 210,
+              "body": "We can refer to https://datatracker.ietf.org/doc/draft-schwartz-ohai-consistency-doublecheck/, it discusses key consistency double check procedure. ",
+              "createdAt": "2022-05-17T10:01:55Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 205,
+              "body": "Is it possible for the client to discover multiple key configurations using the well-known URI ?\r\n",
+              "createdAt": "2022-05-17T10:05:12Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 219,
+              "body": "We may want to consider discussing the client behavior if the oblivious target stops publishing the key config or publishes a unique key per client. ",
+              "createdAt": "2022-05-17T10:18:25Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 148,
+              "body": "The line does is no longer relevant. The client will anyway have to connect to the oblivious target to discover the key config.",
+              "createdAt": "2022-05-17T11:13:11Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 208,
+              "body": "Directly connecting to the oblivious target will expose the client IP address to the oblivious target, we may want to discuss the privacy implications.",
+              "createdAt": "2022-05-17T11:15:14Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "We may want to elaborate on the deployment model assumed by this draft for DDR and DNR. For example, (1) the DNS server needs to have public access for the oblivious proxy to access it (2) client has an prior agreement with the oblivious proxy that the name and path of the oblivous target is encoded using a particular proxy URI template.",
+              "createdAt": "2022-05-17T11:34:06Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            },
+            {
+              "originalPosition": 63,
+              "body": "I am not sure why a target would only support oblivious HTTP for DNR/DDR use cases, please elaborate.",
+              "createdAt": "2022-05-17T11:36:38Z",
+              "updatedAt": "2022-05-17T11:45:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846Kl8G",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-17T17:32:08Z",
+          "updatedAt": "2022-05-17T17:32:08Z",
+          "comments": [
+            {
+              "originalPosition": 205,
+              "body": "Yes \u2014\u00a0the struct for `application/ohttp-keys` can contain multiple key configs",
+              "createdAt": "2022-05-17T17:32:08Z",
+              "updatedAt": "2022-05-17T17:32:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846KmM-",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-17T17:33:07Z",
+          "updatedAt": "2022-05-17T17:33:07Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "It could have multiple services listed \u2014\u00a0one generic DoH for DDR, and an entirely different record for their ODoH server.",
+              "createdAt": "2022-05-17T17:33:07Z",
+              "updatedAt": "2022-05-17T17:33:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846NCCW",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-18T07:42:11Z",
+          "updatedAt": "2022-05-18T07:42:12Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "It would be helpful to mention the above explanation in the DDR section. ",
+              "createdAt": "2022-05-18T07:42:12Z",
+              "updatedAt": "2022-05-18T07:42:12Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
