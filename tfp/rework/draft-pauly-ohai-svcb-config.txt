@@ -5,8 +5,8 @@
 Oblivious HTTP Application Intermediation                       T. Pauly
 Internet-Draft                                                Apple Inc.
 Intended status: Informational                                  T. Reddy
-Expires: 17 November 2022                                         Akamai
-                                                             16 May 2022
+Expires: 24 November 2022                                         Akamai
+                                                             23 May 2022
 
 
       Discovery of Oblivious Services via Service Binding Records
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 November 2022.
+   This Internet-Draft will expire on 24 November 2022.
 
 Copyright Notice
 
@@ -111,7 +111,7 @@ Table of Contents
    that is known to have an oblivious target.
 
    This mechanism does not aid in the discovery of proxies to use to
-   access oblivious targets; the configurations of proxies is out of
+   access oblivious targets; the configuration of proxies is out of
    scope for this document.
 
 2.  Conventions and Definitions
@@ -139,7 +139,10 @@ Table of Contents
    support as mandatory can, therefore, indicate that the service might
    not be accessible in a non-oblivious fashion.  Services that are
    intended to be accessed either as an oblivious target or directly
-   SHOULD NOT mark the "oblivious" parameter as mandatory.
+   SHOULD NOT mark the "oblivious" parameter as mandatory.  Note that
+   since multiple SVCB responses can be provided for a single query, the
+   oblivious and non-oblivious versions of a single service can have
+   different SVCB records to support different names or properties.
 
    The scheme to use for oblivious requests made to a service depends on
    the scheme of the SVCB record.  This document defines the
@@ -172,6 +175,14 @@ Table of Contents
    Oblivious DNS over HTTP (DoH) service.  The default media type
    expected for use in Oblivious HTTP to DNS resolvers is "application/
    dns-message" [DOH].
+
+   In order for DNS servers to function as oblivious targets, they need
+   to be accessible via an oblivious proxy.  Encrypted DNS servers used
+   with the discovery mechanisms described in this section can either be
+   publicly accessible, or specific to a network.  In general, only
+   publicly accessible DNS servers will work as Oblivious DNS servers,
+   unless there is a coordinated deployment with an oblivious proxy that
+   is also hosted within a network.
 
 3.2.1.  Use with DDR
 
@@ -219,14 +230,16 @@ Table of Contents
 
 4.  Configuration Well-Known URI
 
-   Once a client has discovered that a service is available as an
-   oblivious target, it needs to know the key configuration before
-   sending oblivious requests.
+   Clients that know a service is available as an oblivious target,
+   e.g., either via discovery through the "oblivious" parameter in a
+   SVCB or HTTPS record, or by configuration, need to know the key
+   configuration before sending oblivious requests.
 
    This document defines a well-known URI [RFC8615], "oblivious-
    configs", that allows a target to host its configurations.
 
-   The URI is constructed using the TargetName in the SVCB record.
+   The URI is constructed using the TargetName in the associated
+   ServiceMode SVCB record.
 
    For example, the URI for the following record:
 
@@ -252,10 +265,18 @@ Table of Contents
 
 5.  Security and Privacy Considerations
 
+   Attackers on a network can remove SVCB information from cleartext DNS
+   answers that are not protected by DNSSEC [DNSSEC].  This can
+   effectively downgrade clients.  However, since SVCB indications for
+   oblivious support are just hints, a client can mitigate this by
+   always checking for oblivious target information.  Use of encrypted
+   DNS or DNSSEC also can be used as mitigations.
+
    When discovering designated oblivious DNS servers using this
    mechanism, clients need to ensure that the designation is trusted in
    lieu of being able to directly check the contents of the target
-   server's TLS certificate.  See Section 3.2.1 for more discussion.
+   server's TLS certificate.  See Section 3.2.1 for more discussion, as
+   well as the Security Considerations of [I-D.ietf-add-svcb-dns].
 
    As discussed in [OHTTP], client requests using Oblivious HTTP can
    only be linked by recognizing the key configuration.  In order to
@@ -265,10 +286,16 @@ Table of Contents
    configuration.
 
    There are several approaches clients can use to mitigate key
-   targetting attacks.  [CONSISTENCY] provides an analysis of the
-   options for ensuring the key configurations are consistent between
-   different clients.  Clients SHOULD employ some technique to mitigate
-   key targetting attack.
+   targeting attacks.  [CONSISTENCY] provides an analysis of the options
+   for ensuring the key configurations are consistent between different
+   clients.  Clients SHOULD employ some technique to mitigate key
+   targeting attack.
+
+   When clients fetch a target's configuration using the well-known URI,
+   they can expose their identity in the form of an IP addres if they do
+   not connect via a proxy or some other IP-hiding mechanism.  Clients
+   SHOULD use a proxy or similar mechanism to avoid exposing client IPs
+   to a target.
 
 6.  IANA Considerations
 
@@ -367,6 +394,17 @@ Table of Contents
               Internet-Draft, draft-wood-key-consistency-02, 4 March
               2022, <https://datatracker.ietf.org/doc/html/draft-wood-
               key-consistency-02>.
+
+   [DNSSEC]   Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, "DNS Security Introduction and Requirements",
+              RFC 4033, DOI 10.17487/RFC4033, March 2005,
+              <https://www.rfc-editor.org/rfc/rfc4033>.
+
+   [I-D.ietf-add-svcb-dns]
+              Schwartz, B., "Service Binding Mapping for DNS Servers",
+              Work in Progress, Internet-Draft, draft-ietf-add-svcb-dns-
+              03, 22 April 2022, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-add-svcb-dns-03>.
 
 Authors' Addresses
 
