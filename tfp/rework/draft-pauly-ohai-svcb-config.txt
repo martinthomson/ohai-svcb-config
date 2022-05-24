@@ -5,8 +5,8 @@
 Oblivious HTTP Application Intermediation                       T. Pauly
 Internet-Draft                                                Apple Inc.
 Intended status: Informational                                  T. Reddy
-Expires: 24 November 2022                                         Akamai
-                                                             23 May 2022
+Expires: 25 November 2022                                         Akamai
+                                                             24 May 2022
 
 
       Discovery of Oblivious Services via Service Binding Records
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 November 2022.
+   This Internet-Draft will expire on 25 November 2022.
 
 Copyright Notice
 
@@ -196,21 +196,12 @@ Table of Contents
    _dns.resolver.arpa  7200  IN SVCB 1 doh.example.net (
         alpn=h2 dohpath=/dns-query{?dns} oblivious )
 
-   In the case of oblivious DNS servers, the client might not be able to
-   directly use the verification mechanisms described in [DDR], which
-   rely on checking for known resolver IP addresses or hostnames in TLS
-   certificates, since clients do not generally perform TLS with
-   oblivious targets.  A client MAY perform a direct connection to the
-   oblivious target server to do this TLS check, however this may be
-   impossible or undesirable if the client does not want to ever expose
-   its IP address to the oblivious target.  If the client does not use
-   the standard DDR verification check, it MUST use some alternate
-   mechanism to verify that it should use an oblivious target.  For
-   example, the client could have a local policy of known oblivious
-   target names that it is allowed to use, or the client could
-   coordinate with the oblivious proxy to either have the oblivious
-   proxy check the properties of the target's TLS certificate or filter
-   to only allow targets known and trusted by the proxy.
+   Clients still need to perform some verification of oblivious DNS
+   servers, such as the TLS certificate check described in [DDR].  This
+   certificate check can be done when looking up the configuration on
+   the resolver using the well-known URI (Section 4), which can either
+   be done directly, or via a proxy to avoid exposing client IP
+   addresses.
 
    Clients also need to ensure that they are not being targeted with
    unique key configurations that would reveal their identity.  See
@@ -289,7 +280,8 @@ Table of Contents
    targeting attacks.  [CONSISTENCY] provides an analysis of the options
    for ensuring the key configurations are consistent between different
    clients.  Clients SHOULD employ some technique to mitigate key
-   targeting attack.
+   targeting attack.  Oblivious targets that are detected to use
+   targeted key configurations per-client MUST NOT be used.
 
    When clients fetch a target's configuration using the well-known URI,
    they can expose their identity in the form of an IP addres if they do
@@ -335,9 +327,9 @@ Table of Contents
    [BINARY-HTTP]
               Thomson, M. and C. A. Wood, "Binary Representation of HTTP
               Messages", Work in Progress, Internet-Draft, draft-ietf-
-              httpbis-binary-message-03, 9 May 2022,
+              httpbis-binary-message-04, 23 May 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-
-              binary-message-03>.
+              binary-message-04>.
 
    [DDR]      Pauly, T., Kinnear, E., Wood, C. A., McManus, P., and T.
               Jensen, "Discovery of Designated Resolvers", Work in
