@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-05-19T00:08:12.312170+00:00",
+  "timestamp": "2022-05-24T00:08:44.205360+00:00",
   "repo": "tfpauly/draft-ohai-svcb-config",
   "labels": [
     {
@@ -556,13 +556,13 @@
       "labels": [],
       "body": "The main change here is to change the SVCB parameter to a boolean, and have a well-known URI to fetch the config from the target server.",
       "createdAt": "2022-05-16T18:25:31Z",
-      "updatedAt": "2022-05-18T07:42:12Z",
+      "updatedAt": "2022-05-23T21:29:50Z",
       "baseRepository": "tfpauly/draft-ohai-svcb-config",
       "baseRefName": "main",
       "baseRefOid": "c0e215f4c0c3feb119c6be6365af7e2332c5327c",
       "headRepository": "tfpauly/draft-ohai-svcb-config",
       "headRefName": "tfp/rework",
-      "headRefOid": "22522ae98e7a3d0d4037dea9cb0d37a2068eae35",
+      "headRefOid": "cd1e89c026d49a60bf128b591459d659335e7ba3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -740,6 +740,206 @@
               "body": "It would be helpful to mention the above explanation in the DDR section. ",
               "createdAt": "2022-05-18T07:42:12Z",
               "updatedAt": "2022-05-18T07:42:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jXAd",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:08:42Z",
+          "updatedAt": "2022-05-23T21:08:42Z",
+          "comments": [
+            {
+              "originalPosition": 148,
+              "body": "No, it is still relevant \u2014 it may not direct connect to the IP address, it can go through a proxy.",
+              "createdAt": "2022-05-23T21:08:42Z",
+              "updatedAt": "2022-05-23T21:08:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jZpM",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:21:57Z",
+          "updatedAt": "2022-05-23T21:21:57Z",
+          "comments": [
+            {
+              "originalPosition": 214,
+              "body": "Added text in the security considerations section!",
+              "createdAt": "2022-05-23T21:21:57Z",
+              "updatedAt": "2022-05-23T21:21:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jZ-q",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:23:48Z",
+          "updatedAt": "2022-05-23T21:23:48Z",
+          "comments": [
+            {
+              "originalPosition": 171,
+              "body": "Clarified that this should be off of the ServiceMode.",
+              "createdAt": "2022-05-23T21:23:48Z",
+              "updatedAt": "2022-05-23T21:23:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jaUE",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:24:43Z",
+          "updatedAt": "2022-05-23T21:24:44Z",
+          "comments": [
+            {
+              "originalPosition": 224,
+              "body": "Added text about being a hint earlier in the security section.",
+              "createdAt": "2022-05-23T21:24:43Z",
+              "updatedAt": "2022-05-23T21:24:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jaap",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:24:54Z",
+          "updatedAt": "2022-05-23T21:24:55Z",
+          "comments": [
+            {
+              "originalPosition": 214,
+              "body": "Added a reference!",
+              "createdAt": "2022-05-23T21:24:54Z",
+              "updatedAt": "2022-05-23T21:24:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846ja8I",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:25:58Z",
+          "updatedAt": "2022-05-23T21:25:58Z",
+          "comments": [
+            {
+              "originalPosition": 210,
+              "body": "I'd rather not refer to that right now, since that's relying on configuration fetching that we don't have consensus on yet.",
+              "createdAt": "2022-05-23T21:25:58Z",
+              "updatedAt": "2022-05-23T21:25:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jbCU",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:26:28Z",
+          "updatedAt": "2022-05-23T21:26:28Z",
+          "comments": [
+            {
+              "originalPosition": 208,
+              "body": "I added more text about that in security considerations.",
+              "createdAt": "2022-05-23T21:26:28Z",
+              "updatedAt": "2022-05-23T21:26:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jbHy",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:26:54Z",
+          "updatedAt": "2022-05-23T21:26:54Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "Added text in this section where we define the oblivious parameter.",
+              "createdAt": "2022-05-23T21:26:54Z",
+              "updatedAt": "2022-05-23T21:26:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jbQT",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:27:38Z",
+          "updatedAt": "2022-05-23T21:27:38Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Added text at the start of the oblivious DNS section for this!",
+              "createdAt": "2022-05-23T21:27:38Z",
+              "updatedAt": "2022-05-23T21:27:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846jbX3",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-23T21:28:15Z",
+          "updatedAt": "2022-05-23T21:28:16Z",
+          "comments": [
+            {
+              "originalPosition": 219,
+              "body": "Hm, I'm not sure exactly what to say at this point for that.",
+              "createdAt": "2022-05-23T21:28:15Z",
+              "updatedAt": "2022-05-23T21:28:16Z"
             }
           ]
         }
