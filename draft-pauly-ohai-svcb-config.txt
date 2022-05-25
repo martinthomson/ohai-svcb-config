@@ -5,19 +5,19 @@
 Oblivious HTTP Application Intermediation                       T. Pauly
 Internet-Draft                                                Apple Inc.
 Intended status: Informational                                  T. Reddy
-Expires: 6 September 2022                                         Akamai
-                                                            5 March 2022
+Expires: 26 November 2022                                         Akamai
+                                                             25 May 2022
 
 
-  Distribution of Oblivious Configurations via Service Binding Records
+      Discovery of Oblivious Services via Service Binding Records
                   draft-pauly-ohai-svcb-config-latest
 
 Abstract
 
    This document defines a parameter that can be included in SVCB and
    HTTPS DNS resource records to denote that a service is accessible as
-   an Oblivious HTTP target, along with one or more oblivious key
-   configurations.
+   an Oblivious HTTP target, as well as a mechanism to look up oblivious
+   key configurations using a well-known URI.
 
 About This Document
 
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 September 2022.
+   This Internet-Draft will expire on 26 November 2022.
 
 Copyright Notice
 
@@ -66,15 +66,16 @@ Table of Contents
 
    1.  Introduction
    2.  Conventions and Definitions
-   3.  The ohttp-configs and ohttp-path SvcParamKeys
+   3.  The oblivious SvcParamKey
      3.1.  Use in HTTPS service records
      3.2.  Use in DNS server SVCB records
        3.2.1.  Use with DDR
        3.2.2.  Use with DNR
-       3.2.3.  Handling Oblivious DoH Configurations
-   4.  Deployment Considerations
+   4.  Configuration Well-Known URI
    5.  Security and Privacy Considerations
    6.  IANA Considerations
+     6.1.  SVCB Service Parameter
+     6.2.  Well-Known URI
    7.  References
      7.1.  Normative References
      7.2.  Informative References
@@ -99,14 +100,18 @@ Table of Contents
    Designated Resolvers ([DDR].  Clients can work with trusted proxies
    to access these target servers.
 
-   This document defines a mechanism to distribute Oblivious HTTP key
-   configurations in DNS records, as a parameter that can be included in
-   SVCB and HTTPS DNS resource records [SVCB].  The presence of this
-   parameter indicates that a service is an oblivious target; see
-   Section 3 of [OHTTP] for a description of oblivious targets.
+   This document defines a mechanism to advertise that an HTTP service
+   supports Oblivious HTTP using DNS records, as a parameter that can be
+   included in SVCB and HTTPS DNS resource records [SVCB].  The presence
+   of this parameter indicates that a service has an oblivious target;
+   see Section 3 of [OHTTP] for a description of oblivious targets.
+
+   This document also defines a well-known URI [RFC8615], "oblivious-
+   configs", that can be used to look up key configurations on a service
+   that is known to have an oblivious target.
 
    This mechanism does not aid in the discovery of proxies to use to
-   access oblivious targets; the configurations of proxies is out of
+   access oblivious targets; the configuration of proxies is out of
    scope for this document.
 
 2.  Conventions and Definitions
@@ -117,64 +122,67 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  The ohttp-configs and ohttp-path SvcParamKeys
+3.  The oblivious SvcParamKey
 
-   The "ohttp-configs" SvcParamKey Section 6 is used to convey one or
-   more key configurations that can be used by clients to issue
-   oblivious requests to a target server described by the SVCB record.
+   The "oblivious" SvcParamKey Section 6 is used to indicate that a
+   service described in an SVCB record can act as an oblivious target.
+   Clients can issue requests to this service through an oblivious proxy
+   once they learn the key configuration to use to encrypt messages to
+   the oblivious target.
 
-   In wire format, the value of the parameter is one or more KeyConfig
-   structures [OHTTP] concatenated together.  In presentation format,
-   the value is the same concatenated KeyConfig structures encoded in
-   Base64 [BASE64].
+   Both the presentation and wire format values for the "oblivious"
+   parameter MUST be empty.
 
-   The meaning of the "ohttp-configs" parameter depends on the scheme of
-   the SVCB record.  This document defines the interpretation for the
-   "https" [SVCB] and "dns" [DNS-SVCB] schemes.  Other schemes that want
-   to use this parameter MUST define the interpretation and meaning of
-   the configuration.
+   The "oblivious" parameter can be included in the mandatory parameter
+   list to ensure that clients that do not support oblivious access do
+   not try to use the service.  Services that include mark oblivious
+   support as mandatory can, therefore, indicate that the service might
+   not be accessible in a non-oblivious fashion.  Services that are
+   intended to be accessed either as an oblivious target or directly
+   SHOULD NOT mark the "oblivious" parameter as mandatory.  Note that
+   since multiple SVCB responses can be provided for a single query, the
+   oblivious and non-oblivious versions of a single service can have
+   different SVCB records to support different names or properties.
 
-   The "ohttp-path" SvcParamKey Section 6 is used to convey the URI path
-   of the oblivious target to which oblivious HTTP requests can sent.
-   In both wire format and presentation format, this is a UTF-8 encoded
-   string that contains the path segment of a URI.  If this path
-   parameter is not present, oblivious requests can be made to the root
-   "/" path.
+   The scheme to use for oblivious requests made to a service depends on
+   the scheme of the SVCB record.  This document defines the
+   interpretation for the "https" [SVCB] and "dns" [DNS-SVCB] schemes.
+   Other schemes that want to use this parameter MUST define the
+   interpretation and meaning of the configuration.
 
 3.1.  Use in HTTPS service records
 
    For the "https" scheme, which uses the HTTPS RR type instead of SVCB,
-   the presence of the "ohttp-configs" parameter means that the service
+   the presence of the "oblivious" parameter means that the service
    being described is an Oblivious HTTP service that uses the default
    "message/bhttp" media type [OHTTP] [BINARY-HTTP].
 
-   When present in an HTTPS record, the "ohttp-configs" MUST be included
-   in the mandatory parameter list, to ensure that implementations that
-   do not understand the key do not interpret this service as a generic
-   HTTP service.
+   For example, an HTTPS service record for svc.example.com that
+   supports an oblivious target could look like this:
 
-   Clients MUST validate that they can parse the value of "ohttp-
-   configs" as a valid key configuration before attempting to use the
-   service.
+   svc.example.com. 7200  IN HTTPS 1 . alpn=h2,h2 oblivious
+
+   A similar record for a service that only support oblivious
+   connectivity could look like this:
+
+   oblivious-svc.example.com. 7200  IN HTTPS 1 . (
+       mandatory=oblivious oblivious )
 
 3.2.  Use in DNS server SVCB records
 
    For the "dns" scheme, as defined in [DNS-SVCB], the presence of the
-   "ohttp-configs" parameter means that the DNS server being described
-   is an Oblivious DNS over HTTP (DoH) service.  The default media type
+   "oblivious" parameter means that the DNS server being described is an
+   Oblivious DNS over HTTP (DoH) service.  The default media type
    expected for use in Oblivious HTTP to DNS resolvers is "application/
    dns-message" [DOH].
 
-   The "ohttp-configs" parameter is only defined for use with DoH, so
-   the "alpn" SvcParamKey MUST indicate support for a version of HTTP
-   and the "dohpath" SvcParamKey MUST be present.  The "ohttp-configs"
-   MUST also be included in the mandatory parameter list, to ensure that
-   implementations that do not understand the key do not interpret this
-   service as a generic DoH service.
-
-   Clients MUST validate that they can parse the value of "ohttp-
-   configs" as a valid key configuration before attempting to use the
-   service.
+   In order for DNS servers to function as oblivious targets, they need
+   to be accessible via an oblivious proxy.  Encrypted DNS servers used
+   with the discovery mechanisms described in this section can either be
+   publicly accessible, or specific to a network.  In general, only
+   publicly accessible DNS servers will work as Oblivious DNS servers,
+   unless there is a coordinated deployment with an oblivious proxy that
+   is also hosted within a network.
 
 3.2.1.  Use with DDR
 
@@ -182,21 +190,18 @@ Table of Contents
    by either querying _dns.resolver.arpa to a locally configured
    resolver or querying using the name of a resolver [DDR].
 
-   In the case of oblivious DNS servers, the client might not be able to
-   directly use the verification mechanisms described in [DDR], which
-   rely on checking for known resolver IP addresses or hostnames in TLS
-   certificates, since clients do not generally perform TLS with
-   oblivious targets.  A client MAY perform a direct connection to the
-   oblivious target server to do this TLS check, however this may be
-   impossible or undesirable if the client does not want to ever expose
-   its IP address to the oblivious target.  If the client does not use
-   the standard DDR verification check, it MUST use some alternate
-   mechanism to verify that it should use an oblivious target.  For
-   example, the client could have a local policy of known oblivious
-   target names that it is allowed to use, or the client could
-   coordinate with the oblivious proxy to either have the oblivious
-   proxy check the properties of the target's TLS certificate or filter
-   to only allow targets known and trusted by the proxy.
+   For example, a DoH service advertised over DDR can be annotated as
+   supporting oblivious resolution using the following record:
+
+   _dns.resolver.arpa  7200  IN SVCB 1 doh.example.net (
+        alpn=h2 dohpath=/dns-query{?dns} oblivious )
+
+   Clients still need to perform some verification of oblivious DNS
+   servers, such as the TLS certificate check described in [DDR].  This
+   certificate check can be done when looking up the configuration on
+   the resolver using the well-known URI (Section 4), which can either
+   be done directly, or via a proxy to avoid exposing client IP
+   addresses.
 
    Clients also need to ensure that they are not being targeted with
    unique key configurations that would reveal their identity.  See
@@ -214,40 +219,55 @@ Table of Contents
    unique key configurations that would reveal their identity.  See
    Section 5 for more discussion.
 
-3.2.3.  Handling Oblivious DoH Configurations
+4.  Configuration Well-Known URI
 
-   Oblivious DoH was originally defined in [ODOH].  This version of
-   Oblivious DoH uses a different key configuration format than generic
-   Oblivious HTTP.  SVCB records using the "dns" scheme can include one
-   or more ObliviousDoHConfig structures using the "odoh-configs"
-   parameter.
+   Clients that know a service is available as an oblivious target,
+   e.g., either via discovery through the "oblivious" parameter in a
+   SVCB or HTTPS record, or by configuration, need to know the key
+   configuration before sending oblivious requests.
 
-   In wire format, the value of the "odoh-configs" parameter is one or
-   more ObliviousDoHConfigs structures [ODOH] concatenated together.  In
-   presentation format, the value is the same structures encoded in
-   Base64 [BASE64].
+   This document defines a well-known URI [RFC8615], "oblivious-
+   configs", that allows a target to host its configurations.
 
-   All other requirements for "ohttp-configs" in this document apply to
-   "odoh-configs".
+   The URI is constructed using the TargetName in the associated
+   ServiceMode SVCB record.
 
-4.  Deployment Considerations
+   For example, the URI for the following record:
 
-   Deployments that add the "ohttp-configs" SvcParamKey need to be
-   careful to add this only to services meant to be accessed using
-   Oblivious HTTP.  Information in a single SVCB record that contains
-   "ohttp-configs" only applies to the oblivious service, not other HTTP
-   services.
+   svc.example.com. 7200  IN HTTPS 1 . alpn=h2,h2 oblivious
 
-   If a service offers both traditional HTTP and oblivious HTTP, these
-   can be represented by separate SVCB or HTTPS records, both with and
-   without the "ohttp-configs" SvcParamKey.
+   would be "https://svc.example.com/.well-known/oblivious-configs".
+
+   As another example, the URI for the following record:
+
+   _dns.resolver.arpa  7200  IN SVCB 1 doh.example.net (
+        alpn=h2 dohpath=/dns-query{?dns} oblivious )
+
+   would be "https://doh.example.net/.well-known/oblivious-configs".
+
+   The content of this resource is expected to be "application/ohttp-
+   keys", as defined in [OHTTP].
+
+   Before being able to use a server as an oblivious target, clients
+   need to use this URI to fetch the configuration.  They can either
+   fetch it directly, or do so via a proxy in order to avoid the server
+   discovering information about the client's identity.  See Section 5
+   for more discussion of avoiding key targeting attacks.
 
 5.  Security and Privacy Considerations
+
+   Attackers on a network can remove SVCB information from cleartext DNS
+   answers that are not protected by DNSSEC [DNSSEC].  This can
+   effectively downgrade clients.  However, since SVCB indications for
+   oblivious support are just hints, a client can mitigate this by
+   always checking for oblivious target information.  Use of encrypted
+   DNS or DNSSEC also can be used as mitigations.
 
    When discovering designated oblivious DNS servers using this
    mechanism, clients need to ensure that the designation is trusted in
    lieu of being able to directly check the contents of the target
-   server's TLS certificate.  See Section 3.2.1 for more discussion.
+   server's TLS certificate.  See Section 3.2.1 for more discussion, as
+   well as the Security Considerations of [I-D.ietf-add-svcb-dns].
 
    As discussed in [OHTTP], client requests using Oblivious HTTP can
    only be linked by recognizing the key configuration.  In order to
@@ -257,67 +277,77 @@ Table of Contents
    configuration.
 
    There are several approaches clients can use to mitigate key
-   targetting attacks.  [CONSISTENCY] provides an analysis of the
-   options for ensuring the key configurations are consistent between
-   different clients.  Clients SHOULD employ some technique to mitigate
-   key targetting attack.  One mitigation specific to this mechanism is
-   validating that SVCB or HTTPS records including the "oblivious-
-   configs" are protected by DNSSEC [DNSSEC].  This prevents attacks
-   where a unique response is generated for each client of a resolver.
+   targeting attacks.  [CONSISTENCY] provides an analysis of the options
+   for ensuring the key configurations are consistent between different
+   clients.  Clients SHOULD employ some technique to mitigate key
+   targeting attack.  Oblivious targets that are detected to use
+   targeted key configurations per-client MUST NOT be used.
+
+   When clients fetch a target's configuration using the well-known URI,
+   they can expose their identity in the form of an IP addres if they do
+   not connect via a proxy or some other IP-hiding mechanism.  Clients
+   SHOULD use a proxy or similar mechanism to avoid exposing client IPs
+   to a target.
 
 6.  IANA Considerations
+
+6.1.  SVCB Service Parameter
 
    IANA is requested to add the following entry to the SVCB Service
    Parameters registry ([SVCB]).
 
-        +========+===============+====================+===========+
-        | Number | Name          | Meaning            | Reference |
-        +========+===============+====================+===========+
-        | TBD    | ohttp-configs | Oblivious HTTP key | (This     |
-        |        |               | configurations     | document) |
-        +--------+---------------+--------------------+-----------+
-        | TBD    | ohttp-path    | Oblivious HTTP     | (This     |
-        |        |               | request path       | document) |
-        +--------+---------------+--------------------+-----------+
-        | TBD    | odoh-configs  | Oblivious DoH key  | (This     |
-        |        |               | configurations     | document) |
-        +--------+---------------+--------------------+-----------+
+       +========+===========+=========================+===========+
+       | Number | Name      | Meaning                 | Reference |
+       +========+===========+=========================+===========+
+       | TBD    | oblivious | Describes if a service  | (This     |
+       |        |           | has an oblivious target | document) |
+       +--------+-----------+-------------------------+-----------+
 
-                                  Table 1
+                                 Table 1
+
+6.2.  Well-Known URI
+
+   IANA is requested to add a new entry in the "Well-Known URIs"
+   registry [RFC8615] with the following information:
+
+   URI suffix: oblivious-configs
+
+   Change controller: IETF
+
+   Specification document: This document
+
+   Status: permanent
+
+   Related information: N/A
 
 7.  References
 
 7.1.  Normative References
 
-   [BASE64]   Josefsson, S., "The Base16, Base32, and Base64 Data
-              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
-              <https://www.rfc-editor.org/rfc/rfc4648>.
-
    [BINARY-HTTP]
               Thomson, M. and C. A. Wood, "Binary Representation of HTTP
               Messages", Work in Progress, Internet-Draft, draft-ietf-
-              httpbis-binary-message-01, 3 February 2022,
+              httpbis-binary-message-04, 23 May 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-
-              binary-message-01>.
+              binary-message-04>.
 
    [DDR]      Pauly, T., Kinnear, E., Wood, C. A., McManus, P., and T.
               Jensen, "Discovery of Designated Resolvers", Work in
-              Progress, Internet-Draft, draft-ietf-add-ddr-05, 31
-              January 2022, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-add-ddr-05>.
+              Progress, Internet-Draft, draft-ietf-add-ddr-06, 4 April
+              2022, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              add-ddr-06>.
 
    [DNR]      Boucadair, M., Reddy, T., Wing, D., Cook, N., and T.
               Jensen, "DHCP and Router Advertisement Options for the
               Discovery of Network-designated Resolvers (DNR)", Work in
-              Progress, Internet-Draft, draft-ietf-add-dnr-05, 13
-              December 2021, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-add-dnr-05>.
+              Progress, Internet-Draft, draft-ietf-add-dnr-07, 13 April
+              2022, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              add-dnr-07>.
 
    [DNS-SVCB] Schwartz, B., "Service Binding Mapping for DNS Servers",
               Work in Progress, Internet-Draft, draft-ietf-add-svcb-dns-
-              02, 1 February 2022,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-add-
-              svcb-dns-02>.
+              03, 22 April 2022, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-add-svcb-dns-03>.
 
    [DOH]      Hoffman, P. and P. McManus, "DNS Queries over HTTPS
               (DoH)", RFC 8484, DOI 10.17487/RFC8484, October 2018,
@@ -337,12 +367,16 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
+   [RFC8615]  Nottingham, M., "Well-Known Uniform Resource Identifiers
+              (URIs)", RFC 8615, DOI 10.17487/RFC8615, May 2019,
+              <https://www.rfc-editor.org/rfc/rfc8615>.
+
    [SVCB]     Schwartz, B., Bishop, M., and E. Nygren, "Service binding
               and parameter specification via the DNS (DNS SVCB and
               HTTPS RRs)", Work in Progress, Internet-Draft, draft-ietf-
-              dnsop-svcb-https-08, 12 October 2021,
+              dnsop-svcb-https-10, 24 May 2022,
               <https://datatracker.ietf.org/doc/html/draft-ietf-dnsop-
-              svcb-https-08>.
+              svcb-https-10>.
 
 7.2.  Informative References
 
@@ -358,11 +392,11 @@ Table of Contents
               RFC 4033, DOI 10.17487/RFC4033, March 2005,
               <https://www.rfc-editor.org/rfc/rfc4033>.
 
-   [ODOH]     Kinnear, E., McManus, P., Pauly, T., Verma, T., and C. A.
-              Wood, "Oblivious DNS Over HTTPS", Work in Progress,
-              Internet-Draft, draft-pauly-dprive-oblivious-doh-11, 17
-              February 2022, <https://datatracker.ietf.org/doc/html/
-              draft-pauly-dprive-oblivious-doh-11>.
+   [I-D.ietf-add-svcb-dns]
+              Schwartz, B., "Service Binding Mapping for DNS Servers",
+              Work in Progress, Internet-Draft, draft-ietf-add-svcb-dns-
+              03, 22 April 2022, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-add-svcb-dns-03>.
 
 Authors' Addresses
 
