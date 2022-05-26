@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-05-24T00:08:44.205360+00:00",
+  "timestamp": "2022-05-26T00:09:27.795012+00:00",
   "repo": "tfpauly/draft-ohai-svcb-config",
   "labels": [
     {
@@ -547,7 +547,7 @@
       "id": "PR_kwDOG3oZ-8435ji6",
       "title": "Rework of protocol based on IETF 113 feedback",
       "url": "https://github.com/tfpauly/draft-ohai-svcb-config/pull/14",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "tfpauly",
       "authorAssociation": "OWNER",
       "assignees": [
@@ -556,17 +556,19 @@
       "labels": [],
       "body": "The main change here is to change the SVCB parameter to a boolean, and have a well-known URI to fetch the config from the target server.",
       "createdAt": "2022-05-16T18:25:31Z",
-      "updatedAt": "2022-05-23T21:29:50Z",
+      "updatedAt": "2022-05-25T15:08:34Z",
       "baseRepository": "tfpauly/draft-ohai-svcb-config",
       "baseRefName": "main",
       "baseRefOid": "c0e215f4c0c3feb119c6be6365af7e2332c5327c",
       "headRepository": "tfpauly/draft-ohai-svcb-config",
       "headRefName": "tfp/rework",
-      "headRefOid": "cd1e89c026d49a60bf128b591459d659335e7ba3",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "cdc8f301e6e334f608a609be658b9a7bac7a59ab",
+      "closedAt": "2022-05-25T15:08:34Z",
+      "mergedAt": "2022-05-25T15:08:34Z",
+      "mergedBy": "tfpauly",
+      "mergeCommit": {
+        "oid": "8cfed20962c81d7601d68b6958b6e825d0dced39"
+      },
       "comments": [],
       "reviews": [
         {
@@ -940,6 +942,126 @@
               "body": "Hm, I'm not sure exactly what to say at this point for that.",
               "createdAt": "2022-05-23T21:28:15Z",
               "updatedAt": "2022-05-23T21:28:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846kTLP",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-24T05:00:44Z",
+          "updatedAt": "2022-05-24T05:00:44Z",
+          "comments": [
+            {
+              "originalPosition": 210,
+              "body": "Fair point, we can revisit it later.",
+              "createdAt": "2022-05-24T05:00:44Z",
+              "updatedAt": "2022-05-24T05:00:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846kYA_",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-24T05:33:46Z",
+          "updatedAt": "2022-05-24T05:33:47Z",
+          "comments": [
+            {
+              "originalPosition": 219,
+              "body": "If the oblivious target stops publishing the key config or publishes a unique key per client, the client must not use the discovered oblivious DNS server and will fallback to use the pre-configured oblivious DNS server. ",
+              "createdAt": "2022-05-24T05:33:47Z",
+              "updatedAt": "2022-05-24T05:33:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846kcTX",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-24T05:59:58Z",
+          "updatedAt": "2022-05-24T05:59:58Z",
+          "comments": [
+            {
+              "originalPosition": 148,
+              "body": "If the client uses a proxy (e.g., HTTP CONNECT), it can still validate the TLS server certificate of the oblivious DNS server. I prefer the client validating the target certificate itself rather than relying on the oblivious proxy to do the validation on its behalf. ",
+              "createdAt": "2022-05-24T05:59:58Z",
+              "updatedAt": "2022-05-24T05:59:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846kiJc",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-24T06:28:32Z",
+          "updatedAt": "2022-05-24T06:28:32Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Thanks.",
+              "createdAt": "2022-05-24T06:28:32Z",
+              "updatedAt": "2022-05-24T06:28:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846nvM0",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-24T15:59:22Z",
+          "updatedAt": "2022-05-24T15:59:23Z",
+          "comments": [
+            {
+              "originalPosition": 219,
+              "body": "Added a sentence here about not using servers that do key targeting.",
+              "createdAt": "2022-05-24T15:59:23Z",
+              "updatedAt": "2022-05-24T15:59:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG3oZ-846nvVO",
+          "commit": {
+            "abbreviatedOid": "22522ae"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-05-24T15:59:43Z",
+          "updatedAt": "2022-05-24T15:59:43Z",
+          "comments": [
+            {
+              "originalPosition": 148,
+              "body": "Ah, I see. I've re-written this paragraph to just say to do the normal TLS cert check!",
+              "createdAt": "2022-05-24T15:59:43Z",
+              "updatedAt": "2022-05-24T15:59:43Z"
             }
           ]
         }
